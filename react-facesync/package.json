@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@mediapipe/camera_utils": "^0.3.1640029074",
+    "@mediapipe/holistic": "^0.5.1635989137",
     "@quarkworks-inc/avatar-webkit": "^0.11.0",
     "@react-three/drei": "^9.43.3",
     "@react-three/fiber": "^8.9.1",

@@ -8,7 +8,7 @@ import { Canvas } from "@react-three/fiber";
 import AnimationBlob from './components/animationBlob/animationBlob';
 
 function App() {
-  
+  const videoInput = useRef()
 
   return (
   <div className="App">
@@ -22,10 +22,10 @@ function App() {
       <ambientLight intensity={0.6} />
       <directionalLight position={[-2, 5, 2]} intensity={1} />
       <AnimationBlob/>
-      <Suspense fallback={null}>
-        <Avatar scale={2.2} position={[-2, -2, 1]} />
-      </Suspense>
+      <Avatar scale={2.2} position={[-2, -2, 1]} video={videoInput}/>
     </Canvas>
+    <video hidden ref={videoInput} width="1920px" height="1080px"></video>
+
   </div>
   );
 }
