@@ -1,0 +1,5 @@
+.loading_message{
+  position: absolute;
+  z-index: 0;
+  color: red;
+}
