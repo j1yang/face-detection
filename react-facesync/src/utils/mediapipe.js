@@ -1,6 +1,6 @@
 import { Camera } from "@mediapipe/camera_utils";
 import { Holistic } from "@mediapipe/holistic";
-
+import { setMorphs } from './morph';
 
 // device constants
 const WIDTH = 1920;
@@ -42,8 +42,9 @@ export function PoseDetector(preload, videoInput) {
 
         if (faceLandmarks) {
             // morph 설정은 여기서 하지말고 faceLandMarks를 Holistic 와 camera와 함께 리턴하자.
-            // setMorphs(faceLandmarks);
-            console.log(faceLandmarks)
+            setMorphs(faceLandmarks);
+
+            //console.log(faceLandmarks)
         }
     });
 

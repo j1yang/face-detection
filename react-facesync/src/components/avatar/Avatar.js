@@ -6,10 +6,12 @@ import React, { useEffect, useRef } from 'react'
 import { Html, useGLTF } from '@react-three/drei'
 import styles from './avatar.module.css'
 import { PoseDetector } from '../../utils/mediapipe';
+import { Avatar } from '../../utils/morph';
 
 export default function Model(props) {
   const head = useRef();
   const { nodes, materials } = useGLTF('/avatar.glb')
+  Avatar(nodes);
   const preload = useRef();
   const videoInput = useRef(props.video.current);
 
@@ -26,6 +28,7 @@ export default function Model(props) {
   // });
 
   useEffect(()=>{
+    console.log(nodes)
     console.log(props.video)
     const [detector, camera] = PoseDetector(
       preload.current,
@@ -37,7 +40,9 @@ export default function Model(props) {
     return function cleanup() {
       detector.close();
       camera.stop();
-  };
+    };
+
+
   })
 
   return (
