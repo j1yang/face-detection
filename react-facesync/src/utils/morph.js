@@ -42,7 +42,7 @@ const RIGHT = 234;     // right most point
 const TOP = 10;        // top most point                       
 const BOT = 152;       // bot most point
 
-let skeleton, spine, neckBone, morphTargets, morphDict;
+let skeleton, spine, neckBone, headMorphTargets, headMorphDict, teethMorphTargets, teethMorphDict;
 let leftShoulderBone, leftElbowBone, leftWristBone, rightShoulderBone, rightElbowBone, rightWristBone;
 let leftHipBone, leftKneeBone, leftAnkleBone, leftFootBone, rightHipBone, rightKneeBone, rightAnkleBone, rightFootBone;
 let leftHandBones, rightHandBones;
@@ -50,13 +50,19 @@ let leftHandBones, rightHandBones;
 const eyelashNames = ["default", "Eyelashes", "Ch22_Eyelashes"];
 
 export async function Avatar(nodes){
-  let skinnedMesh = nodes.Wolf3D_Head
+  let headSkinnedMesh = nodes.Wolf3D_Head
   // Skinned Mesh
-  if (skinnedMesh) {
-      morphTargets = skinnedMesh.morphTargetInfluences;
-      morphDict = skinnedMesh.morphTargetDictionary;
+  if (headSkinnedMesh) {
+      headMorphTargets = headSkinnedMesh.morphTargetInfluences;
+      headMorphDict = headSkinnedMesh.morphTargetDictionary;
   }
 
+  let teethSkinnedMesh = nodes.Wolf3D_Teeth
+
+  if (teethSkinnedMesh) {
+    teethMorphTargets = teethSkinnedMesh.morphTargetInfluences;
+    teethMorphDict = teethSkinnedMesh.morphTargetDictionary;
+    }
   // Skeleton / Bone
   skeleton = nodes.Hips;
   spine = nodes.Spine; // spine 1,2?
@@ -355,7 +361,7 @@ export function setFingers(handLandmarks, isRight) {
 
 
 export function setMorphs(faceLandmarks) {
-    if (!morphTargets) return;
+    if (!headMorphTargets) return;
 
     // PROCESS LANDMARKS
 
@@ -408,7 +414,7 @@ export function setMorphs(faceLandmarks) {
     let thetaX = Math.acos(zAxis.x);
     let thetaY = Math.acos(zAxis.y);
     let thetaZ = Math.acos(yAxis.x);
-    let rotX = -(thetaY - Math.PI / 2) - 0.1 * Math.PI;
+    let rotX = -(thetaY - Math.PI / 2) - 0.02 * Math.PI;
     let rotY = thetaX - Math.PI / 2;
     let rotZ = -(thetaZ - Math.PI / 2);
     smoothRotation(neckBone, rotX, rotY, rotZ);
@@ -423,16 +429,16 @@ export function setMorphs(faceLandmarks) {
 
     let min = 0.1;
     let max = 0.12;
-    setMorphTarget("eyesWideLeft", interpolate(eyeRT[1] - eyeRB[1], min, max));
-    setMorphTarget("eyesWideRight", interpolate(eyeLT[1] - eyeLB[1], min, max));
+    setHeadMorphTarget("eyesWideLeft", interpolate(eyeRT[1] - eyeRB[1], min, max));
+    setHeadMorphTarget("eyesWideRight", interpolate(eyeLT[1] - eyeLB[1], min, max));
 
     max = 0.095;
-    setMorphTarget("eyeSquintLeft", interpolate(eyeRT[1] - eyeRB[1], min, max));
-    setMorphTarget("eyeSquintRight", interpolate(eyeLT[1] - eyeLB[1], min, max));
+    setHeadMorphTarget("eyeSquintLeft", interpolate(eyeRT[1] - eyeRB[1], min, max));
+    setHeadMorphTarget("eyeSquintRight", interpolate(eyeLT[1] - eyeLB[1], min, max));
 
     max = 0.09;
-    setMorphTarget("eyeBlinkLeft", interpolate(eyeRT[1] - eyeRB[1], min, max));
-    setMorphTarget("eyeBlinkRight", interpolate(eyeLT[1] - eyeLB[1], min, max));
+    setHeadMorphTarget("eyeBlinkLeft", interpolate(eyeRT[1] - eyeRB[1], min, max));
+    setHeadMorphTarget("eyeBlinkRight", interpolate(eyeLT[1] - eyeLB[1], min, max));
 
     // eyebrows
     let browR = facePos[66];
@@ -441,12 +447,12 @@ export function setMorphs(faceLandmarks) {
     // ?
     // min = 0.35;
     // max = 0.4;
-    // setMorphTarget("browsUp_Left", interpolate(browR[1], min, max));
-    // setMorphTarget("browsUp_Right", interpolate(browL[1], min, max));
+    // setHeadMorphTarget("browsUp_Left", interpolate(browR[1], min, max));
+    // setHeadMorphTarget("browsUp_Right", interpolate(browL[1], min, max));
 
     // max = 0.33;
-    // setMorphTarget("browsDown_Left", interpolate(browR[1], min, max));
-    // setMorphTarget("browsDown_Right", interpolate(browL[1], min, max));
+    // setHeadMorphTarget("browsDown_Left", interpolate(browR[1], min, max));
+    // setHeadMorphTarget("browsDown_Right", interpolate(browL[1], min, max));
 
     // mouth
     let mouthT = facePos[13];
@@ -456,23 +462,31 @@ export function setMorphs(faceLandmarks) {
 
     min = 0.01;
     max = 0.15;
-    setMorphTarget("mouthOpen", interpolate(mouthT[1] - mouthB[1], min, max));
+    setHeadMorphTarget("mouthOpen", interpolate(mouthT[1] - mouthB[1], min, max));
 
+    min = 0.12;
+    max = 0.16;
+    setHeadMorphTarget("jawOpen", interpolate(mouthT[1] - mouthB[1], min, max));
+
+    min = 0.12;
+    max = 0.16;
+    setTeethMorphTarget("jawOpen", interpolate(mouthT[1] - mouthB[1], min, max));
+    
     // ?
     // min = -0.15;
     // max = -0.11;
-    // setMorphTarget("Midmouth_Right", interpolate(mouthR[0], min, max));
-    // setMorphTarget("Midmouth_Left", interpolate(mouthL[0], -min, -max));
+    // setHeadMorphTarget("Midmouth_Right", interpolate(mouthR[0], min, max));
+    // setHeadMorphTarget("Midmouth_Left", interpolate(mouthL[0], -min, -max));
 
 
     min = -0.22;
     max = -0.25;
-    setMorphTarget("mouthFrownLeft", interpolate(mouthR[1], min, max));
-    setMorphTarget("mouthFrownRight", interpolate(mouthL[1], min, max));
+    // setHeadMorphTarget("mouthFrownLeft", interpolate(mouthR[1], min, max));
+    // setHeadMorphTarget("mouthFrownRight", interpolate(mouthL[1], min, max));
 
-    max = -0.18;
-    setMorphTarget("mouthSmileLeft", interpolate(mouthR[1], min, max));
-    setMorphTarget("mouthSmileRight", interpolate(mouthL[1], min, max));
+    max = -0.15;
+    setHeadMorphTarget("mouthSmileLeft", interpolate(mouthR[1], min, max));
+    setHeadMorphTarget("mouthSmileRight", interpolate(mouthL[1], min, max));
 
     // nose
     let noseR = facePos[129];
@@ -480,8 +494,8 @@ export function setMorphs(faceLandmarks) {
 
     min = -0.027;
     max = -0.018;
-    setMorphTarget("noseSneerLeft", interpolate(noseR[1], min, max));
-    setMorphTarget("noseSneerRight", interpolate(noseL[1], min, max));
+    setHeadMorphTarget("noseSneerLeft", interpolate(noseR[1], min, max));
+    setHeadMorphTarget("noseSneerRight", interpolate(noseL[1], min, max));
 }
 
 // motion smoothing rotation of object by x, y, z
@@ -527,8 +541,14 @@ function interpolate(val, min, max) {
     else return result;
 }
 
-function setMorphTarget(target, val) {
+function setHeadMorphTarget(target, val) {
     // interpolate with previous value to prevent jittering
     let SMOOTHING = 0.25;
-    morphTargets[morphDict[target]] = (1 - SMOOTHING) * morphTargets[morphDict[target]] + SMOOTHING * val;
+    headMorphTargets[headMorphDict[target]] = (1 - SMOOTHING) * headMorphTargets[headMorphDict[target]] + SMOOTHING * val;
+}
+
+function setTeethMorphTarget(target, val) {
+    // interpolate with previous value to prevent jittering
+    let SMOOTHING = 0.25;
+    teethMorphTargets[teethMorphDict[target]] = (1 - SMOOTHING) * teethMorphTargets[teethMorphDict[target]] + SMOOTHING * val;
 }
