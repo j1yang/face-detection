@@ -31,7 +31,7 @@ export default function Model(props) {
     console.log(nodes)
     console.log(props.video)
     const [detector, camera] = PoseDetector(
-      preload.current,
+      props.preload.current,
       props.video.current
     );
 
@@ -46,7 +46,6 @@ export default function Model(props) {
   })
 
   return (
-    
       <group {...props} dispose={null}>
         <primitive object={nodes.Hips} />
         <skinnedMesh geometry={nodes.Wolf3D_Body.geometry} material={materials.Wolf3D_Body} skeleton={nodes.Wolf3D_Body.skeleton} />

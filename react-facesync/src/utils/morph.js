@@ -414,7 +414,7 @@ export function setMorphs(faceLandmarks) {
     let thetaX = Math.acos(zAxis.x);
     let thetaY = Math.acos(zAxis.y);
     let thetaZ = Math.acos(yAxis.x);
-    let rotX = -(thetaY - Math.PI / 2) - 0.02 * Math.PI;
+    let rotX = -(thetaY - Math.PI / 2) - (-0.1) * Math.PI;
     let rotY = thetaX - Math.PI / 2;
     let rotZ = -(thetaZ - Math.PI / 2);
     smoothRotation(neckBone, rotX, rotY, rotZ);

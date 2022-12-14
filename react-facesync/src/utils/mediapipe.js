@@ -19,7 +19,8 @@ export function PoseDetector(preload, videoInput) {
     });
 
     holistic.onResults((results) => {
-        //preload.hidden = true;
+        preload.hidden = true;
+
         //console.log(results)
         // let poseLandmarks = results.poseLandmarks;
         // let poseWorldLandmarks = results.ea;
