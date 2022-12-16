@@ -34,3 +34,14 @@ a {
   flex-direction: column;
   z-index: 1;
 } 
+
+.preload{
+  color: red;
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}

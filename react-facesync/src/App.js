@@ -16,7 +16,7 @@ function App() {
       <h1>
         Face Sync App
       </h1>
-      <h2 ref={preLoad}>
+      <h2 className="preload" ref={preLoad}>
         Reading your face...
       </h2>
     </div>
