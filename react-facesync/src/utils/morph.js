@@ -42,19 +42,19 @@ const RIGHT = 234;     // right most point
 const TOP = 10;        // top most point                       
 const BOT = 152;       // bot most point
 
+// Bone constants
 let skeleton, spine, neckBone, headMorphTargets, headMorphDict, teethMorphTargets, teethMorphDict;
 let leftShoulderBone, leftElbowBone, leftWristBone, rightShoulderBone, rightElbowBone, rightWristBone;
 let leftHipBone, leftKneeBone, leftAnkleBone, leftFootBone, rightHipBone, rightKneeBone, rightAnkleBone, rightFootBone;
 let leftHandBones, rightHandBones;
 
-const eyelashNames = ["default", "Eyelashes", "Ch22_Eyelashes"];
-
+//Init Avatar nodes
 export async function Avatar(nodes){
   let headSkinnedMesh = nodes.Wolf3D_Head
   // Skinned Mesh
   if (headSkinnedMesh) {
-      headMorphTargets = headSkinnedMesh.morphTargetInfluences;
-      headMorphDict = headSkinnedMesh.morphTargetDictionary;
+    headMorphTargets = headSkinnedMesh.morphTargetInfluences;
+    headMorphDict = headSkinnedMesh.morphTargetDictionary;
   }
 
   let teethSkinnedMesh = nodes.Wolf3D_Teeth
@@ -62,10 +62,11 @@ export async function Avatar(nodes){
   if (teethSkinnedMesh) {
     teethMorphTargets = teethSkinnedMesh.morphTargetInfluences;
     teethMorphDict = teethSkinnedMesh.morphTargetDictionary;
-    }
+  }
+
   // Skeleton / Bone
   skeleton = nodes.Hips;
-  spine = nodes.Spine; // spine 1,2?
+  spine = nodes.Spine; 
   neckBone = nodes.Neck;
 
   leftShoulderBone = nodes.RightArm;
@@ -126,6 +127,7 @@ export async function Avatar(nodes){
 
 }
 
+// Morphing Pose
 export function setPose(poseLandmarks, poseWorldLandmarks) {
     let userJoints = [];
     poseWorldLandmarks.forEach((landmark) => {
@@ -285,6 +287,7 @@ export function setPose(poseLandmarks, poseWorldLandmarks) {
     }
 }
 
+// Morphing Finger
 export function setFingers(handLandmarks, isRight) {
     let avatarBones = (isRight) ? rightHandBones : leftHandBones;
 
@@ -358,8 +361,7 @@ export function setFingers(handLandmarks, isRight) {
 
 
 
-
-
+// Morphing Face 
 export function setMorphs(faceLandmarks) {
     if (!headMorphTargets) return;
 
@@ -441,8 +443,8 @@ export function setMorphs(faceLandmarks) {
     setHeadMorphTarget("eyeBlinkRight", interpolate(eyeLT[1] - eyeLB[1], min, max));
 
     // eyebrows
-    let browR = facePos[66];
-    let browL = facePos[296];
+    // let browR = facePos[66];
+    // let browL = facePos[296];
 
     // ?
     // min = 0.35;
@@ -472,18 +474,20 @@ export function setMorphs(faceLandmarks) {
     max = 0.16;
     setTeethMorphTarget("jawOpen", interpolate(mouthT[1] - mouthB[1], min, max));
     
-    // ?
+    // No midmouth targets for the ready player me avatar.
     // min = -0.15;
     // max = -0.11;
     // setHeadMorphTarget("Midmouth_Right", interpolate(mouthR[0], min, max));
     // setHeadMorphTarget("Midmouth_Left", interpolate(mouthL[0], -min, -max));
 
 
-    min = -0.22;
-    max = -0.25;
+    // min = -0.22;
+    // max = -0.25;
+    // No mouthFrown targets for the ready player me avatar.
     // setHeadMorphTarget("mouthFrownLeft", interpolate(mouthR[1], min, max));
     // setHeadMorphTarget("mouthFrownRight", interpolate(mouthL[1], min, max));
-
+    
+    min = -0.22;
     max = -0.15;
     setHeadMorphTarget("mouthSmileLeft", interpolate(mouthR[1], min, max));
     setHeadMorphTarget("mouthSmileRight", interpolate(mouthL[1], min, max));
