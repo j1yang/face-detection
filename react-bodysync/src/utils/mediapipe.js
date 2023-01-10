@@ -27,22 +27,10 @@ export function PoseDetector(preload, videoInput) {
         if (poseWorldLandmarks) {
             setPose(poseLandmarks, poseWorldLandmarks);
         }
-    
-        // let leftHandLandmarks = results.leftHandLandmarks;
-        // if (leftHandLandmarks) {
-        //     setFingers(leftHandLandmarks, false);
-        // }
-    
-        // let rightHandLandmarks = results.rightHandLandmarks;
-        // if (rightHandLandmarks) {
-        //     setFingers(rightHandLandmarks, true);
-        // }
-    
         let faceLandmarks = results.faceLandmarks;
         //console.log(faceLandmarks) 
 
         if (faceLandmarks) {
-            // morph 설정은 여기서 하지말고 faceLandMarks를 Holistic 와 camera와 함께 리턴하자.
             setMorphs(faceLandmarks);
 
             //console.log(faceLandmarks)
