@@ -69,11 +69,11 @@ export async function Avatar(nodes){
   spine = nodes.Spine; 
   neckBone = nodes.Neck;
 
-  leftShoulderBone = nodes.RightArm;
-  leftElbowBone = nodes.RightForeArm;
-  leftWristBone = nodes.RightHand;
+  rightShoulderBone = nodes.RightArm;
+  rightElbowBone = nodes.RightForeArm;
+  rightWristBone = nodes.RightHand;
 
-  leftHandBones = [
+  rightHandBones = [
     rightWristBone,
     nodes.RightHandThumb1,
     nodes.RightHandThumb2,
@@ -97,11 +97,11 @@ export async function Avatar(nodes){
     nodes.RightHandPinky4
   ]
 
-  rightShoulderBone = nodes.LeftArm;
-  rightElbowBone = nodes.LeftForeArm;
-  rightWristBone = nodes.LeftHand;
+  leftShoulderBone = nodes.LeftArm;
+  leftElbowBone = nodes.LeftForeArm;
+  leftWristBone = nodes.LeftHand;
 
-  rightHandBones = [
+  leftHandBones = [
     leftWristBone,
     nodes.LeftHandThumb1,
     nodes.LeftHandThumb2,
@@ -134,10 +134,10 @@ export function setPose(poseLandmarks, poseWorldLandmarks) {
         userJoints.push(new THREE.Vector3(landmark.x, landmark.y, landmark.z).negate());
     });
 
-    let rightShoulderVis = poseWorldLandmarks[RIGHTSHOULDER].visibility;
     let leftShoulderVis = poseWorldLandmarks[LEFTSHOULDER].visibility;
-    let rightHipVis = poseWorldLandmarks[RIGHTHIP].visibility;
-    let leftHipVis = poseWorldLandmarks[LEFTHIP].visibility;
+    let rightShoulderVis = poseWorldLandmarks[RIGHTSHOULDER].visibility;
+    // let rightHipVis = poseWorldLandmarks[RIGHTHIP].visibility;
+    // let leftHipVis = poseWorldLandmarks[LEFTHIP].visibility;
 
     // REQUIRED: both shoulders must be visible to track upperbody
     if (rightShoulderVis > VISTHRESH && leftShoulderVis > VISTHRESH) {
@@ -156,134 +156,7 @@ export function setPose(poseLandmarks, poseWorldLandmarks) {
         let rotX = thetaY - 1.2 * Math.PI / 2;
         let rotY = - thetaX + Math.PI / 2;
         let rotZ = thetaZ - Math.PI / 2;
-        smoothRotation(spine, rotX, rotY, rotZ);
-
-        // left arm
-        let xAxis = shoulderX.clone();
-        let yAxis = shoulderY.clone();
-        let zAxis = shoulderZ.clone();
-        let basis = new THREE.Matrix3().set(
-            xAxis.x, yAxis.x, zAxis.x,
-            xAxis.y, yAxis.y, zAxis.y,
-            xAxis.z, yAxis.z, zAxis.z
-        );
-
-        let rot = rotateBone(userJoints[LEFTSHOULDER], userJoints[LEFTELBOW], leftElbowBone.position, basis);
-        leftShoulderBone.quaternion.slerp(rot, SMOOTHING);
-        updateBasis(leftShoulderBone.quaternion, xAxis, yAxis, zAxis, basis);
-
-        rot = rotateBone(userJoints[LEFTELBOW], userJoints[LEFTWRIST], leftWristBone.position, basis);
-        leftElbowBone.quaternion.slerp(rot, SMOOTHING);
-        updateBasis(leftElbowBone.quaternion, xAxis, yAxis, zAxis, basis);
-
-        let leftFingersUser = userJoints[LEFTPINKY].lerp(userJoints[LEFTINDEX], 0.5);
-        let leftFingersAvatar = leftHandBones[PINKY1].position.clone().lerp(leftHandBones[INDEX1].position, 0.5);
-        rot = rotateBone(userJoints[LEFTWRIST], leftFingersUser, leftFingersAvatar, basis);
-        leftWristBone.quaternion.slerp(rot, SMOOTHING);
-
-        // right arm
-        xAxis = shoulderX.clone();
-        yAxis = shoulderY.clone();
-        zAxis = shoulderZ.clone();
-        basis = new THREE.Matrix3().set(
-            xAxis.x, yAxis.x, zAxis.x,
-            xAxis.y, yAxis.y, zAxis.y,
-            xAxis.z, yAxis.z, zAxis.z
-        );
-
-        rot = rotateBone(userJoints[RIGHTSHOULDER], userJoints[RIGHTELBOW], rightElbowBone.position, basis);
-        rightShoulderBone.quaternion.slerp(rot, SMOOTHING);
-        updateBasis(rightShoulderBone.quaternion, xAxis, yAxis, zAxis, basis);
-
-        rot = rotateBone(userJoints[RIGHTELBOW], userJoints[RIGHTWRIST], rightWristBone.position, basis);
-        rightElbowBone.quaternion.slerp(rot, SMOOTHING);
-        updateBasis(rightElbowBone.quaternion, xAxis, yAxis, zAxis, basis);
-
-        let rightFingersUser = userJoints[RIGHTPINKY].lerp(userJoints[RIGHTINDEX], 0.5);
-        let rightFingersAvatar = rightHandBones[PINKY1].position.clone().lerp(rightHandBones[INDEX1].position, 0.5);
-        rot = rotateBone(userJoints[RIGHTWRIST], rightFingersUser, rightFingersAvatar, basis);
-        rightWristBone.quaternion.slerp(rot, SMOOTHING);
-    }
-
-    // REQUIRED: both hips must be visible to track lowerbody
-    if (rightHipVis > VISTHRESH && leftHipVis > VISTHRESH) {
-        // hip local coordinate system
-        // positive directions: x - leftHip -> rightHip,
-        //                      y - hip -> shoulder,
-        //                      z - user -> camera
-        let hipX = userJoints[RIGHTHIP].clone().sub(userJoints[LEFTHIP]).normalize();
-        let hipY = userJoints[RIGHTSHOULDER].clone().lerp(userJoints[LEFTSHOULDER], 0.5).normalize();   // BUG: using shoulder Y is not accurate, but don't have better way...
-        let hipZ = hipX.clone().cross(hipY).normalize();
-
-        // body direction
-        let thetaX = Math.acos(hipZ.x);
-        let rotY = - thetaX + Math.PI / 2;
-        smoothRotation(skeleton, 0, rotY, 0);
-        smoothRotation(spine, 0.2 * Math.PI / 2, -rotY, 0);
-
-        // world position
-        let LH = new THREE.Vector3(poseLandmarks[LEFTHIP].x * WIDTH, poseLandmarks[LEFTHIP].y * HEIGHT);
-        let RH = new THREE.Vector3(poseLandmarks[RIGHTHIP].x * WIDTH, poseLandmarks[RIGHTHIP].y * HEIGHT);
-
-        let percentX = LH.lerp(RH, 0.5).x / WIDTH - 0.5;
-        skeleton.position.x = (1 - SMOOTHING) * skeleton.position.x + SMOOTHING * percentX * -1000;
-
-        // TODO: z direction movement
-        // let shoulderLen = LH.distanceTo(RH);
-        // let angleY = Math.atan2(shoulderX.z, shoulderX.x);
-        // shoulderLen /= Math.abs(Math.cos(angleY));  // BUG: division by 0
-        // let precentZ = interpolate(shoulderLen, 550, 150);
-        // skeleton.position.z = precentZ * -1000;
-
-        // left leg
-        let xAxis = hipX.clone();
-        let yAxis = hipY.clone();
-        let zAxis = hipZ.clone();
-        let basis = new THREE.Matrix3().set(
-            xAxis.x, yAxis.x, zAxis.x,
-            xAxis.y, yAxis.y, zAxis.y,
-            xAxis.z, yAxis.z, zAxis.z
-        );
-
-        let rot = rotateBone(userJoints[LEFTHIP], userJoints[LEFTKNEE], leftKneeBone.position, basis);
-        leftHipBone.quaternion.slerp(rot, SMOOTHING);
-        updateBasis(leftHipBone.quaternion, xAxis, yAxis, zAxis, basis);
-
-        rot = rotateBone(userJoints[LEFTKNEE], userJoints[LEFTANKLE], leftAnkleBone.position, basis);
-        leftKneeBone.quaternion.slerp(rot, SMOOTHING);
-        updateBasis(leftKneeBone.quaternion, xAxis, yAxis, zAxis, basis);
-
-        rot = rotateBone(userJoints[LEFTANKLE], userJoints[LEFTFOOT], leftFootBone.position, basis);
-        leftAnkleBone.quaternion.slerp(rot, SMOOTHING);
-
-        // right leg
-        xAxis = hipX.clone();
-        yAxis = hipY.clone();
-        zAxis = hipZ.clone();
-        basis = new THREE.Matrix3().set(
-            xAxis.x, yAxis.x, zAxis.x,
-            xAxis.y, yAxis.y, zAxis.y,
-            xAxis.z, yAxis.z, zAxis.z
-        );
-
-        rot = rotateBone(userJoints[RIGHTHIP], userJoints[RIGHTKNEE], rightKneeBone.position, basis);
-        rightHipBone.quaternion.slerp(rot, SMOOTHING);
-        updateBasis(rightHipBone.quaternion, xAxis, yAxis, zAxis, basis);
-
-        rot = rotateBone(userJoints[RIGHTKNEE], userJoints[RIGHTANKLE], rightAnkleBone.position, basis);
-        rightKneeBone.quaternion.slerp(rot, SMOOTHING);
-        updateBasis(rightKneeBone.quaternion, xAxis, yAxis, zAxis, basis);
-
-        rot = rotateBone(userJoints[RIGHTANKLE], userJoints[RIGHTFOOT], rightFootBone.position, basis);
-        rightAnkleBone.quaternion.slerp(rot, SMOOTHING);
-    } else {
-        // reset legs
-        leftHipBone.quaternion.identity();
-        leftKneeBone.quaternion.identity();
-        leftAnkleBone.quaternion.identity();
-        rightHipBone.quaternion.identity();
-        rightKneeBone.quaternion.identity();
-        rightAnkleBone.quaternion.identity();
+        smoothRotation(spine, rotX, - rotY, rotZ);
     }
 }
 

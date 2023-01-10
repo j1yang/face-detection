@@ -22,11 +22,11 @@ export function PoseDetector(preload, videoInput) {
         preload.hidden = true;
 
         //console.log(results)
-        // let poseLandmarks = results.poseLandmarks;
-        // let poseWorldLandmarks = results.ea;
-        // if (poseWorldLandmarks) {
-        //     // setPose(poseLandmarks, poseWorldLandmarks);
-        // }
+        let poseLandmarks = results.poseLandmarks;
+        let poseWorldLandmarks = results.ea;
+        if (poseWorldLandmarks) {
+            setPose(poseLandmarks, poseWorldLandmarks);
+        }
     
         // let leftHandLandmarks = results.leftHandLandmarks;
         // if (leftHandLandmarks) {

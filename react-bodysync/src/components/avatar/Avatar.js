@@ -9,7 +9,7 @@ export default function Model(props) {
   Avatar(nodes);
 
   useEffect(()=>{
-    // console.log(nodes)
+    console.log(nodes)
     // console.log(props.video)
     const [detector, camera] = PoseDetector(
       props.preload.current,
