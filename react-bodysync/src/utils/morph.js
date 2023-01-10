@@ -289,8 +289,8 @@ export function setMorphs(faceLandmarks) {
     
     min = -0.22;
     max = -0.15;
-    setHeadMorphTarget("mouthSmileLeft", interpolate(mouthR[1], min, max));
-    setHeadMorphTarget("mouthSmileRight", interpolate(mouthL[1], min, max));
+    setHeadMorphTarget("mouthSmileRight", interpolate(mouthR[1], min, max));
+    setHeadMorphTarget("mouthSmileLeft", interpolate(mouthL[1], min, max));
 
     // nose
     let noseR = facePos[129];
@@ -298,8 +298,8 @@ export function setMorphs(faceLandmarks) {
 
     min = -0.027;
     max = -0.018;
-    setHeadMorphTarget("noseSneerLeft", interpolate(noseR[1], min, max));
-    setHeadMorphTarget("noseSneerRight", interpolate(noseL[1], min, max));
+    setHeadMorphTarget("noseSneerRight", interpolate(noseR[1], min, max));
+    setHeadMorphTarget("noseSneerLeft", interpolate(noseL[1], min, max));
 }
 
 // motion smoothing rotation of object by x, y, z
