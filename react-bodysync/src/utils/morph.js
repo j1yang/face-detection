@@ -160,79 +160,6 @@ export function setPose(poseLandmarks, poseWorldLandmarks) {
     }
 }
 
-// Morphing Finger
-export function setFingers(handLandmarks, isRight) {
-    let avatarBones = (isRight) ? rightHandBones : leftHandBones;
-
-    // hand landmark positions
-    let userJoints = [];
-    handLandmarks.forEach((landmark) => {
-        userJoints.push(new THREE.Vector3(landmark.x * WIDTH, -landmark.y * HEIGHT, landmark.z * WIDTH));
-    });
-
-    // hand local coordinate system
-    // positive directions: x - fingers -> wrist,
-    //                      y - back of hand -> world
-    //                      z - pinky -> thumb
-    let handX = userJoints[WRIST].clone().sub(userJoints[MIDDLE1]).normalize();
-    if (isRight) handX.negate();
-    let handZ = userJoints[INDEX1].clone().sub(userJoints[RING1]).normalize();
-    let handY = handX.clone().cross(handZ).normalize();
-    if (!isRight) handY.negate();
-
-    let handBasis = new THREE.Matrix3().set(
-        handX.x, handY.x, handZ.x,
-        handX.y, handY.y, handZ.y,
-        handX.z, handY.z, handZ.z
-    );
-
-    // thumb
-    let xAxis = handX.clone();
-    let yAxis = handY.clone();
-    let zAxis = handZ.clone();
-    let basis = handBasis.clone();
-
-    // iterate thumb joints
-    for (let i = 1; i < 4; i++) {
-        let rot = rotateBone(userJoints[i], userJoints[i + 1], avatarBones[i + 1].position, basis);       
-        let angles = new THREE.Euler().setFromQuaternion(rot.normalize());
-
-        // constrain finger rotation to x-axis, range [0, 90] degrees
-        let angleX = angles.toVector3().length();
-        angleX = Math.max(0, angleX);
-        angleX = Math.min(Math.PI / 2, angleX);
-        
-        if (isRight) smoothRotation(avatarBones[i], angleX - 0.2 * Math.PI, 0, 0);
-        else smoothRotation(avatarBones[i], angleX, 0, 0);
-
-        updateBasis(avatarBones[i].quaternion, xAxis, yAxis, zAxis, basis);
-    }
-
-    // iterate fingers
-    for (let i = 5; i <= 17; i += 4) {
-        xAxis = handX.clone();
-        yAxis = handY.clone();
-        zAxis = handZ.clone();
-        basis = handBasis.clone();
-
-        // iterate finger joints
-        for (let j = i; j < i + 3; j++) {
-            let rot = rotateBone(userJoints[j], userJoints[j + 1], avatarBones[j + 1].position, basis);
-            
-            // constrain finger rotation to z-axis, range [0, 90] degrees
-            let angleZ = new THREE.Euler().setFromQuaternion(rot.normalize()).z;
-            angleZ = Math.max(0, angleZ);
-            angleZ = Math.min(Math.PI / 2, angleZ)
-
-            if (isRight) smoothRotation(avatarBones[j], 0, 0, -angleZ);
-            else smoothRotation(avatarBones[j], 0, 0, angleZ);
-
-            updateBasis(avatarBones[j].quaternion, xAxis, yAxis, zAxis, basis);
-        }
-    }
-}
-
-
 
 // Morphing Face 
 export function setMorphs(faceLandmarks) {
@@ -292,7 +219,7 @@ export function setMorphs(faceLandmarks) {
     let rotX = -(thetaY - Math.PI / 2) - (-0.1) * Math.PI;
     let rotY = thetaX - Math.PI / 2;
     let rotZ = -(thetaZ - Math.PI / 2);
-    smoothRotation(neckBone, rotX, rotY, rotZ);
+    smoothRotation(neckBone, rotX, - rotY, rotZ);
 
     // CALCULATE MORPHS
 
@@ -304,16 +231,16 @@ export function setMorphs(faceLandmarks) {
 
     let min = 0.1;
     let max = 0.12;
-    setHeadMorphTarget("eyesWideLeft", interpolate(eyeRT[1] - eyeRB[1], min, max));
-    setHeadMorphTarget("eyesWideRight", interpolate(eyeLT[1] - eyeLB[1], min, max));
+    setHeadMorphTarget("eyesWideRight", interpolate(eyeRT[1] - eyeRB[1], min, max));
+    setHeadMorphTarget("eyesWideLeft", interpolate(eyeLT[1] - eyeLB[1], min, max));
 
     max = 0.095;
-    setHeadMorphTarget("eyeSquintLeft", interpolate(eyeRT[1] - eyeRB[1], min, max));
-    setHeadMorphTarget("eyeSquintRight", interpolate(eyeLT[1] - eyeLB[1], min, max));
+    setHeadMorphTarget("eyeSquintRight", interpolate(eyeRT[1] - eyeRB[1], min, max));
+    setHeadMorphTarget("eyeSquintLeft", interpolate(eyeLT[1] - eyeLB[1], min, max));
 
     max = 0.09;
-    setHeadMorphTarget("eyeBlinkLeft", interpolate(eyeRT[1] - eyeRB[1], min, max));
-    setHeadMorphTarget("eyeBlinkRight", interpolate(eyeLT[1] - eyeLB[1], min, max));
+    setHeadMorphTarget("eyeBlinkRight", interpolate(eyeRT[1] - eyeRB[1], min, max));
+    setHeadMorphTarget("eyeBlinkLeft", interpolate(eyeLT[1] - eyeLB[1], min, max));
 
     // eyebrows
     // let browR = facePos[66];
