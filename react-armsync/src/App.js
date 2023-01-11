@@ -11,7 +11,7 @@ function App() {
   <div className="App">
     <div className="extra-info">
       <h1>
-        Upper-Body Sync
+        Arm Sync
       </h1>
       <h2 className="preload" ref={preLoad}>
         Reading your pose... 

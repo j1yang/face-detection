@@ -157,9 +157,42 @@ export function setPose(poseLandmarks, poseWorldLandmarks) {
         let rotY = - thetaX + Math.PI / 2;
         let rotZ = thetaZ - Math.PI / 2;
         smoothRotation(spine, rotX, - rotY, rotZ);
+
+        // right arm
+        let xAxis = shoulderX.clone();
+        let yAxis = shoulderY.clone();
+        let zAxis = shoulderZ.clone();
+        let basis = new THREE.Matrix3().set(
+            xAxis.x, yAxis.x, zAxis.x,
+            xAxis.y, - yAxis.y, zAxis.y,
+            xAxis.z, yAxis.z, zAxis.z
+        );
+
+        let rot = rotateBone(userJoints[RIGHTSHOULDER], userJoints[RIGHTELBOW], rightElbowBone.position, basis);
+        rightShoulderBone.quaternion.slerp(rot, SMOOTHING);
+        updateBasis(rightShoulderBone.quaternion, xAxis, yAxis, zAxis, basis);
+        
+
+
+        rot = rotateBone(userJoints[RIGHTELBOW], userJoints[RIGHTWRIST], rightWristBone.position, basis);
+        rightElbowBone.quaternion.slerp(rot, SMOOTHING);
+        updateBasis(rightElbowBone.quaternion, xAxis, yAxis, zAxis, basis);
     }
 }
 
+
+
+// applies rotation to basis
+function updateBasis(rotation, xAxis, yAxis, zAxis, basis) {
+    xAxis.applyQuaternion(rotation);
+    yAxis.applyQuaternion(rotation);
+    zAxis.applyQuaternion(rotation);
+    basis.set(
+        xAxis.x, yAxis.x, zAxis.x,
+        xAxis.y, - yAxis.y, zAxis.y,
+        xAxis.z, yAxis.z, zAxis.z
+    );
+}
 
 // Morphing Face 
 export function setMorphs(faceLandmarks) {
@@ -323,17 +356,6 @@ function rotateBone(userJoint, userChild, avatarChild, basis) {
     return new THREE.Quaternion().setFromUnitVectors(avatarLimb, userLimb);
 }
 
-// applies rotation to basis
-function updateBasis(rotation, xAxis, yAxis, zAxis, basis) {
-    xAxis.applyQuaternion(rotation);
-    yAxis.applyQuaternion(rotation);
-    zAxis.applyQuaternion(rotation);
-    basis.set(
-        xAxis.x, yAxis.x, zAxis.x,
-        xAxis.y, yAxis.y, zAxis.y,
-        xAxis.z, yAxis.z, zAxis.z
-    );
-}
 
 // returns linear interpolation of val between min and max
 // (percentage that val is between min and max)
