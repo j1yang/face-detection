@@ -219,7 +219,7 @@ export function setMorphs(faceLandmarks) {
     let rotX = -(thetaY - Math.PI / 2) - (-0.1) * Math.PI;
     let rotY = thetaX - Math.PI / 2;
     let rotZ = -(thetaZ - Math.PI / 2);
-    smoothRotation(neckBone, rotX, - rotY, rotZ);
+    smoothRotation(neckBone, rotX, - rotY, - rotZ);
 
     // CALCULATE MORPHS
 
