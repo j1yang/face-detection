@@ -186,9 +186,9 @@ export function setPose(poseLandmarks, poseWorldLandmarks) {
         yAxis = shoulderY.clone();
         zAxis = shoulderZ.clone();
         let basisR = new THREE.Matrix3().set(
-            - xAxis.z - Math.PI /2, yAxis.z , zAxis.z,
-            xAxis.y , - yAxis.y , - zAxis.y ,
-            xAxis.x, - yAxis.x , - zAxis.x
+            - xAxis.z - Math.PI /2, yAxis.z + 1.6 * Math.PI/2, zAxis.z + Math.PI/2,
+            - xAxis.y, - yAxis.y - 1.1*Math.PI/2, - zAxis.y - 1.5 * Math.PI,
+            - xAxis.x - 2 * Math.PI, yAxis.x, zAxis.x
         );
 
         rot = rotateBone(userJoints[RIGHTSHOULDER], userJoints[RIGHTELBOW], rightElbowBone.position, basisR);
@@ -203,7 +203,6 @@ export function setPose(poseLandmarks, poseWorldLandmarks) {
         // let rightFingersAvatar = rightHandBones[PINKY1].position.clone().lerp(rightHandBones[INDEX1].position, 0.5);
         // rot = rotateBone(userJoints[RIGHTWRIST], rightFingersUser, rightFingersAvatar, basis);
         // rightWristBone.quaternion.slerp(rot, SMOOTHING);
-
     }
 }
 
@@ -213,9 +212,9 @@ function updateBasisR(rotation, xAxis, yAxis, zAxis, basisR) {
     yAxis.applyQuaternion(rotation);
     zAxis.applyQuaternion(rotation);
     basisR.set(
-        - xAxis.z - Math.PI /2, yAxis.z , zAxis.z,
-        xAxis.y , - yAxis.y , - zAxis.y ,
-        xAxis.x, - yAxis.x , - zAxis.x
+        - xAxis.z - Math.PI /2, yAxis.z + 1.6 * Math.PI/2, zAxis.z + Math.PI/2,
+        xAxis.y, - yAxis.y - 1.1*Math.PI/2 , - zAxis.y - 1.5 * Math.PI,
+        xAxis.x, yAxis.x, zAxis.x
     );
 }
 
