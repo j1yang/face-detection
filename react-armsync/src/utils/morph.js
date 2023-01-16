@@ -186,14 +186,14 @@ export function setPose(poseLandmarks, poseWorldLandmarks) {
         yAxis = shoulderY.clone();
         zAxis = shoulderZ.clone();
         let basisR = new THREE.Matrix3().set(
-            xAxis.z, yAxis.z - 1.6 * Math.PI, zAxis.z + Math.PI/2,
-            - xAxis.y, yAxis.y, - zAxis.y - 1.5 * Math.PI,
-            xAxis.x - 2 * Math.PI, yAxis.x, zAxis.x - Math.PI /2
+            - xAxis.z - Math.PI /2, yAxis.z , zAxis.z,
+            xAxis.y , - yAxis.y , - zAxis.y ,
+            xAxis.x, - yAxis.x , - zAxis.x
         );
 
         rot = rotateBone(userJoints[RIGHTSHOULDER], userJoints[RIGHTELBOW], rightElbowBone.position, basisR);
         rightShoulderBone.quaternion.slerp(rot, SMOOTHING);
-        updateBasis(rightShoulderBone.quaternion, xAxis, yAxis, zAxis, basisR);
+        updateBasisR(rightShoulderBone.quaternion, xAxis, yAxis, zAxis, basisR);
 
         rot = rotateBone(userJoints[RIGHTELBOW], userJoints[RIGHTWRIST], rightWristBone.position, basisR);
         rightElbowBone.quaternion.slerp(rot, SMOOTHING);
@@ -213,9 +213,9 @@ function updateBasisR(rotation, xAxis, yAxis, zAxis, basisR) {
     yAxis.applyQuaternion(rotation);
     zAxis.applyQuaternion(rotation);
     basisR.set(
-        xAxis.z, yAxis.z - 1.6 * Math.PI, zAxis.z + Math.PI/2,
-        - xAxis.y, - yAxis.y, - zAxis.y - 1.5 * Math.PI,
-        xAxis.x - 2 * Math.PI, yAxis.x, zAxis.x - Math.PI /2
+        - xAxis.z - Math.PI /2, yAxis.z , zAxis.z,
+        xAxis.y , - yAxis.y , - zAxis.y ,
+        xAxis.x, - yAxis.x , - zAxis.x
     );
 }
 
