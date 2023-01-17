@@ -188,7 +188,7 @@ export function setPose(poseLandmarks, poseWorldLandmarks) {
         let basisR = new THREE.Matrix3().set(
             xAxis.z + Math.PI /2, yAxis.z + 1.6 * Math.PI/2, zAxis.z - Math.PI/2,
             - xAxis.y, yAxis.y, zAxis.y - 1.5 * Math.PI,
-            - xAxis.x + 2 * Math.PI, yAxis.x, zAxis.x
+            - xAxis.x + 2 * Math.PI, yAxis.x, zAxis.x - Math.PI /3
         );
 
         rot = rotateBone(userJoints[RIGHTSHOULDER], userJoints[RIGHTELBOW], rightElbowBone.position, basisR);
@@ -214,7 +214,7 @@ function updateBasisR(rotation, xAxis, yAxis, zAxis, basisR) {
     basisR.set(
         xAxis.z + Math.PI /2, yAxis.z + 1.6 * Math.PI/2, zAxis.z - Math.PI/2,
         - xAxis.y, yAxis.y, zAxis.y - 1.5 * Math.PI,
-        - xAxis.x + 2 * Math.PI, yAxis.x, zAxis.x
+        - xAxis.x + 2 * Math.PI, yAxis.x, zAxis.x - Math.PI /3
     );
 }
 
