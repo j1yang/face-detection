@@ -2,11 +2,26 @@ import React, { useEffect, useRef } from 'react'
 import {useGLTF } from '@react-three/drei'
 import { PoseDetector } from '../../utils/mediapipe';
 import { Avatar } from '../../utils/morph';
+import { useFrame } from '@react-three/fiber';
 
 export default function Model(props) {
   const head = useRef();
   const { nodes, materials } = useGLTF('/avatar.glb')
   Avatar(nodes);
+
+  // default face motions
+  let eyeCheck = 0
+
+  // Frame
+  useFrame((state,delta)=>{
+    if(eyeCheck > 8){// Eye Blinking
+      head.current.morphTargetInfluences[head.current.morphTargetDictionary['eyesClosed']] = 1;
+      eyeCheck= 0;
+    }else{
+      eyeCheck += delta;
+      head.current.morphTargetInfluences[head.current.morphTargetDictionary['eyesClosed']] = 0;
+    }
+  })
 
   useEffect(()=>{
     console.log(nodes)
